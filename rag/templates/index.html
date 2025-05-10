@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Chat</title>
+  <style>
+    
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(270deg, #8E50DE, #B266FF, #FF66E3, #8E50DE);
+    background-size: 600% 600%;
+    animation: backgroundMove 20s ease infinite;
+  }
+  
+  @keyframes backgroundMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .chat-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(142, 80, 222, 0.3);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+  }
+  
+  .chat-header {
+    background: #8E50DE;
+    color: white;
+    padding: 15px;
+    font-size: 1.2em;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .chat-box {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+  }
+  
+  .message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+  }
+  
+  .message.user {
+    background: #e8dbfc;
+    align-self: flex-end;
+  }
+  
+  .message.bot {
+    background: #f8e9fd;
+    align-self: flex-start;
+  }
+  
+  .chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .chat-input button {
+    background: #B266FF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-left: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .chat-input button:hover {
+    background: #9a3de0;
+  }
+  
+  </style>
+  
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Nerd AI</div>
+    <div class="chat-box" id="chat-box">
+      <div class="message bot">Olá! Como posso ajudar você hoje?</div>
+    </div>
+    <form class="chat-input" onsubmit="sendMessage(event)">
+      <input type="text" id="user-input" placeholder="Digite sua mensagem..." required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+ 
+  <script>
+    function sendMessage(event) {
+      event.preventDefault();
+      const input = document.getElementById('user-input');
+      const message = input.value;
+      const chatBox = document.getElementById('chat-box');
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = message;
+      chatBox.appendChild(userMsg);
+
+      const botMsg = document.createElement('div');
+      botMsg.className = 'message bot';
+      botMsg.textContent = 'Mensagem automatica: ';
+      chatBox.appendChild(botMsg);
+
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
