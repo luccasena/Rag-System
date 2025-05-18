@@ -10,7 +10,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     overflow: hidden;
-    background: linear-gradient(270deg, #8E50DE, #B266FF, #FF66E3, #8E50DE);
+    background: #404040;
     background-size: 600% 600%;
     animation: backgroundMove 20s ease infinite;
   }
@@ -26,14 +26,14 @@ body {
     margin: 50px auto;
     background: rgba(255, 255, 255, 0.92);
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(142, 80, 222, 0.3);
+    box-shadow: 0 0 20px #8C8C8C;
     display: flex;
     flex-direction: column;
     height: 80vh;
   }
   
   .chat-header {
-    background: #8E50DE;
+    background: #000000;
     color: white;
     padding: 15px;
     font-size: 1.2em;
@@ -55,30 +55,26 @@ body {
   }
   
   .message.user {
-    background: #e8dbfc;
+    background: #8C8C8C;
     align-self: flex-end;
   }
   
-  .message.bot {
-    background: #f8e9fd;
-    align-self: flex-start;
-  }
   
-  .chat-input {
+  #chat-form {
     display: flex;
     padding: 10px;
     border-top: 1px solid #ddd;
   }
   
-  .chat-input input {
+  #chat-form input {
     flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
   }
   
-  .chat-input button {
-    background: #B266FF;
+  #chat-form button {
+    background: #000000;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -87,46 +83,64 @@ body {
     cursor: pointer;
   }
   
-  .chat-input button:hover {
-    background: #9a3de0;
+  #chat-form button:hover {
+    background: #404040;
   }
   
   </style>
   
 </head>
+
 <body>
   <div class="chat-container">
-    <div class="chat-header">Nerd AI</div>
-    <div class="chat-box" id="chat-box">
-      <div class="message bot">Olá! Como posso ajudar você hoje?</div>
-    </div>
-    <form class="chat-input" onsubmit="sendMessage(event)">
-      <input type="text" id="user-input" placeholder="Digite sua mensagem..." required />
-      <button type="submit">Enviar</button>
-    </form>
+    <div class="chat-header">OAC-AI</div>
+      <div class="chat-box" id="chat-box">
+        <div class="message bot">Olá! Como posso ajudar você hoje?</div>
+        </div>
+
+      <form id="chat-form">
+        {% csrf_token %}
+        <input type="text" id="user-input" placeholder="Digite sua mensagem..." required />
+        <button type="submit">Enviar</button>
+      </form>
   </div>
 
- 
   <script>
-    function sendMessage(event) {
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
+
+    form.addEventListener('submit', async function(event) {
       event.preventDefault();
-      const input = document.getElementById('user-input');
-      const message = input.value;
-      const chatBox = document.getElementById('chat-box');
+
+      const pergunta = input.value;
 
       const userMsg = document.createElement('div');
       userMsg.className = 'message user';
-      userMsg.textContent = message;
+      userMsg.textContent = pergunta;
       chatBox.appendChild(userMsg);
 
-      const botMsg = document.createElement('div');
-      botMsg.className = 'message bot';
-      botMsg.textContent = 'Mensagem automatica: ';
-      chatBox.appendChild(botMsg);
-
       input.value = '';
+
+      const response = await fetch("{% url 'rag_consultas' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ pergunta: pergunta })
+      });
+
+      const data = await response.json();
+
+      const aiMsg = document.createElement('div');
+      aiMsg.className = 'message ai';
+      aiMsg.textContent = data.resultado;
+      chatBox.appendChild(aiMsg);
+
       chatBox.scrollTop = chatBox.scrollHeight;
-    }
+
+    });
   </script>
 </body>
 </html>
